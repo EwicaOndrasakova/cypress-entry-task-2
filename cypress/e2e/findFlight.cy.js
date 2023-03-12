@@ -8,64 +8,62 @@ describe("Test for Kiwi Cypress weekend", () => {
     cy.viewport(1200, 860);
   });
 
-  Cypress._.times(10, () => {
-    it("The flight from Barcelona is found", () => {
-      //Skontroluj, že všetky sekcie a mapa sa zobrazia na stránke.
-      cy.get("#sticky-search-form").should("be.visible");
-      cy.get(departureDestinationPicker).should("be.visible");
-      cy.get(arrivalDestinationPicker).should("be.visible");
-      cy.get(departureDestinationMapPreview).should("be.visible");
-      cy.get(trendingDestinationsList).should("be.visible");
+  // Cypress._.times(10, () => {
+  it("The flight from Barcelona is found", () => {
+    //Skontroluj, že všetky sekcie a mapa sa zobrazia na stránke.
+    cy.get("#sticky-search-form").should("be.visible");
+    cy.get(departureDestinationPicker).should("be.visible");
+    cy.get(arrivalDestinationPicker).should("be.visible");
+    cy.get(departureDestinationMapPreview).should("be.visible");
+    cy.get(trendingDestinationsList).should("be.visible");
 
-      // Skontroluj, že v search form je origin správne nastavený na Barcelona BCN.
-      cy.get(searchFormOrigin).should("be.visible").contains("Barcelona BCN");
+    // Skontroluj, že v search form je origin správne nastavený na Barcelona BCN.
+    cy.get(searchFormOrigin).should("be.visible").contains("Barcelona BCN");
 
-      //Skontroluj, že H1 element má správny text “Barcelona–El Prat (BCN)”.
-      cy.get("h1")
-        .should("be.exist")
-        .should("have.text", "Barcelona–El Prat (BCN)");
+    //Skontroluj, že H1 element má správny text “Barcelona–El Prat (BCN)”.
+    cy.get("h1")
+      .should("be.exist")
+      .should("have.text", "Barcelona–El Prat (BCN)");
 
-      //V sekcii “ Popular destinations from Barcelona–El Prat (BCN)” klikni na prvú picture card.
-      cy.get(popularDesatinationsPictureCard).eq(0).click();
+    //V sekcii “ Popular destinations from Barcelona–El Prat (BCN)” klikni na prvú picture card.
+    cy.get(popularDesatinationsPictureCard).eq(0).click();
 
-      //Skontroluj, že si bol/a presmerovaný/á na stránku search/results so správne vyplneným search form.
-      cy.url().should("include", "/search/results");
-      cy.log("URL contains search/results");
+    //Skontroluj, že si bol/a presmerovaný/á na stránku search/results so správne vyplneným search form.
+    cy.url().should("include", "/search/results");
+    cy.log("URL contains search/results");
 
-      //Pridaj vo filtroch jednu príručnú batožinu.
-      cy.get(passengersDropdown).click();
-      cy.get(cabinBaggageButton).find(button).eq(1).click();
-      cy.get(passengersFieldDoneButton).click();
+    //Pridaj vo filtroch jednu príručnú batožinu.
+    cy.get(passengersDropdown).click();
+    cy.get(cabinBaggageButton).find(button).eq(1).click();
+    cy.get(passengersFieldDoneButton).click();
 
-      //Presvedč sa, že sa ti načítali nové výsledky.
-      //Pokračuj na rezervačný formulár z prvého výsledku (klikni na tlačidlo "Select"/"Rezervovať").
-      cy.get(activeFiltersField).should("have.text", "1 filter active");
-      cy.get(resultCardPrice).should("be.visible");
-      cy.get(resultCard, { timeout: 15000 })
-        .eq(0)
-        .should("be.visible")
-        .find(bookingButton);
+    //Presvedč sa, že sa ti načítali nové výsledky.
+    //Pokračuj na rezervačný formulár z prvého výsledku (klikni na tlačidlo "Select"/"Rezervovať").
+    cy.get(activeFiltersField).should("have.text", "1 filter active");
 
-      cy.get(bookingButton).contains("Select").click();
+    cy.get(bagsFilter).find("input").eq(0).should("have.value", "1");
 
-      //Magic login
-      cy.get(loginModal)
-        .should("be.visible")
-        .find(continueAsGuestButton)
-        .click();
+    cy.get(resultCardPrice).should("be.visible");
+    cy.get(resultCard, { timeout: 15000 })
+      .eq(0)
+      .should("be.visible")
+      .find(bookingButton);
 
-      // Over, že si sa dostal/a na booking stránku (rezervačný formulár).
-      cy.get(reservationContent).should("be.visible");
-      cy.get(reservationHead, { timeout: 15000 }).should("be.visible");
-      cy.get(reservationItinerary)
-        .find("h2")
-        .should("have.text", "Trip summary");
+    cy.get(bookingButton).contains("Select").click();
 
-      cy.get(reservationBillItems).should("be.visible");
-      cy.get(reservationBoxPrice).should("be.visible");
-    });
+    //Magic login
+    cy.get(loginModal).should("be.visible").find(continueAsGuestButton).click();
+
+    // Over, že si sa dostal/a na booking stránku (rezervačný formulár).
+    cy.get(reservationContent).should("be.visible");
+    cy.get(reservationHead, { timeout: 15000 }).should("be.visible");
+    cy.get(reservationItinerary).find("h2").should("have.text", "Trip summary");
+
+    cy.get(reservationBillItems).should("be.visible");
+    cy.get(reservationBoxPrice).should("be.visible");
   });
 });
+// });
 
 const button = '[type="button"]';
 const bookingButton = '[data-test="BookingButton"]';
@@ -92,3 +90,4 @@ const reservationBoxPrice = '[data-test="ReservationBillBoxItemPrice"]';
 const reservationContent = '[data-test="Reservation-content"]';
 const reservationHead = '[data-test="ReservationHead"]';
 const reservationBillItems = ".ReservationBill-items-wrapper";
+const bagsFilter = '[data-test="FilterHeader-bags"]';
